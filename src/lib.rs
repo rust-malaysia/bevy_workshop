@@ -1,14 +1,15 @@
 use avian2d::prelude::*;
 use bevy::prelude::*;
+use bevy::render::camera::ScalingMode::FixedVertical;
 
 mod action;
 mod obstacles;
 mod player;
 mod ui;
 
-pub struct SnakeGamePlugin;
+pub struct GamePlugin;
 
-impl Plugin for SnakeGamePlugin {
+impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             PhysicsPlugins::default(),
@@ -25,14 +26,14 @@ impl Plugin for SnakeGamePlugin {
             .add_systems(Startup, spawn_camera)
             .add_systems(
                 Update,
-                exit_game
+                stop_game
                     // Only run if we are not in main menu.
                     .run_if(in_state(GameState::InGame)),
             );
     }
 }
 
-fn exit_game(
+fn stop_game(
     kb_inputs: Res<ButtonInput<KeyCode>>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
@@ -43,7 +44,15 @@ fn exit_game(
 }
 
 fn spawn_camera(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((
+        Camera2d,
+        Projection::Orthographic(OrthographicProjection {
+            scaling_mode: FixedVertical {
+                viewport_height: 720.0,
+            },
+            ..OrthographicProjection::default_2d()
+        }),
+    ));
 }
 
 #[derive(
@@ -54,4 +63,5 @@ pub enum GameState {
     #[default]
     MainMenu,
     InGame,
+    GameOver,
 }

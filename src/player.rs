@@ -9,29 +9,44 @@ pub fn player_plugin(app: &mut App) {
         .add_systems(OnEnter(GameState::InGame), spawn_player)
         .add_systems(
             Update,
-            player_jump
-                // Only run if the player has been spawned in.
+            (player_jump, check_collisions)
                 .run_if(in_state(GameState::InGame)),
         );
 }
 
+fn check_collisions(
+    q_player: Query<Entity, With<Player>>,
+    collisions: Collisions,
+    mut next_state: ResMut<NextState<GameState>>,
+) -> Result {
+    let entity = q_player.single()?;
+    let mut contacts = collisions.collisions_with(entity);
+    // Have collided...
+    if contacts.next().is_some() {
+        next_state.set(GameState::GameOver);
+    }
+
+    Ok(())
+}
+
 /// Move player based on [`PlayerAction`].
 fn player_jump(
-    mut q_speeds: Query<
+    mut q_player: Query<
         (&mut LinearVelocity, &ActionState<PlayerAction>),
         With<Player>,
     >,
     jump_impulse: Res<JumpImpulse>,
-) {
+) -> Result {
     // Move the player transform based on speed and direction.
-    for (mut linear_velocity, player_action) in
-        q_speeds.iter_mut()
-    {
-        if player_action.just_pressed(&PlayerAction::Jump) {
-            linear_velocity.0 = Vec2::Y * jump_impulse.0;
-            info!("Jump.");
-        }
+    let (mut linear_velocity, player_action) =
+        q_player.single_mut()?;
+
+    if player_action.just_pressed(&PlayerAction::Jump) {
+        linear_velocity.0 = Vec2::Y * jump_impulse.0;
+        info!("Jump.");
     }
+
+    Ok(())
 }
 
 /// Spawns the player.
@@ -61,6 +76,7 @@ fn spawn_player(
 }
 
 #[derive(Component)]
+#[require(CollisionEventsEnabled)]
 pub struct Player;
 
 #[derive(Resource)]

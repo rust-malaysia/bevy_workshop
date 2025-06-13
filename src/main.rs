@@ -6,7 +6,7 @@ fn main() {
     app.add_plugins((
         DefaultPlugins,
         bevy_framepace::FramepacePlugin,
-        snake_game::SnakeGamePlugin,
+        flappy_bird::GamePlugin,
     ));
 
     app.run();
