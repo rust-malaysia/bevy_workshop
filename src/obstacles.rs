@@ -4,12 +4,10 @@ use avian2d::prelude::*;
 use bevy::color::palettes::tailwind::*;
 use bevy::prelude::*;
 
-use crate::GameState;
-
-const WINDOW_HEIGHT: f32 = 720.0;
-const WINDOW_WIDTH: f32 = 1280.0;
-const WINDOW_HALF_WIDTH: f32 = WINDOW_WIDTH / 2.0;
-const WINDOW_HALF_HEIGHT: f32 = WINDOW_HEIGHT / 2.0;
+use crate::{
+    GameState, WINDOW_HALF_HEIGHT, WINDOW_HALF_WIDTH,
+    WINDOW_HEIGHT,
+};
 
 const OBSTACLE_WIDTH: f32 = 50.0;
 const OBSTACLE_SPEED: f32 = 200.0;

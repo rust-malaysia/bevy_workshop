@@ -7,6 +7,11 @@ mod obstacles;
 mod player;
 mod ui;
 
+const WINDOW_HEIGHT: f32 = 720.0;
+const WINDOW_WIDTH: f32 = 1280.0;
+const WINDOW_HALF_WIDTH: f32 = WINDOW_WIDTH / 2.0;
+const WINDOW_HALF_HEIGHT: f32 = WINDOW_HEIGHT / 2.0;
+
 pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
@@ -23,23 +28,7 @@ impl Plugin for GamePlugin {
         app.insert_resource(Gravity(-Vec2::Y * 1000.0))
             // Initialize the states.
             .init_state::<GameState>()
-            .add_systems(Startup, spawn_camera)
-            .add_systems(
-                Update,
-                stop_game
-                    // Only run if we are not in main menu.
-                    .run_if(in_state(GameState::InGame)),
-            );
-    }
-}
-
-fn stop_game(
-    kb_inputs: Res<ButtonInput<KeyCode>>,
-    mut next_state: ResMut<NextState<GameState>>,
-) {
-    if kb_inputs.just_pressed(KeyCode::Escape) {
-        info!("Return to MainMenu.");
-        next_state.set(GameState::MainMenu);
+            .add_systems(Startup, spawn_camera);
     }
 }
 
@@ -48,7 +37,7 @@ fn spawn_camera(mut commands: Commands) {
         Camera2d,
         Projection::Orthographic(OrthographicProjection {
             scaling_mode: FixedVertical {
-                viewport_height: 720.0,
+                viewport_height: WINDOW_HEIGHT,
             },
             ..OrthographicProjection::default_2d()
         }),
