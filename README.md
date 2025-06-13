@@ -14,3 +14,5 @@ At the end of the workshop, participants will also build a simple flappy bird ga
 ```
 cargo run
 ```
+
+Head to [Bevy Workshop Template](https://github.com/rust-malaysia/bevy_workshop_template) for a minimal template made specificaly for this workshop!
